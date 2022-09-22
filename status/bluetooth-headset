@@ -1,0 +1,3 @@
+#! /bin/sh
+
+bluetoothctl devices Connected | grep Headset > /dev/null $1>2 && echo headset

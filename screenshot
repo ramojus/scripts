@@ -1,0 +1,57 @@
+#! /bin/sh
+
+region=$1
+where=$2
+# session_type=$(loginctl show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}')
+session_type="wayland"
+file_dir="$HOME/Pictures/screenshots"
+tmp_path=""
+screenshot_path=""
+action_message=""
+
+case $where in
+    "clipboard")
+        tmp_path=/tmp/screenshot.png
+        screenshot_path=$tmp_path
+        action_message="copied to clipboard"
+        ;;
+    "file")
+        [ -d $file_dir ] || mkdir -p $file_dir
+        screenshot_path=$file_dir/$(date '+%Y-%m-%d_%H:%M:%S').png
+        action_message="saved as $screenshot_path"
+esac
+
+if [ "$session_type" != "wayland" ]; then
+    case $region in
+        "selection")
+            maim -s $screenshot_path
+            ;;
+        "window")
+            maim -i $(xdotool getactivewindow) $screenshot_path
+            ;;
+        "screen")
+            maim $screenshot_path
+    esac
+    [ -f $tmp_path ] &&
+        xclip -selection clipboard -t image/png -i $tmp_path
+else
+    case $region in
+        "selection")
+            grim -g "$(slurp)" $screenshot_path
+            ;;
+        "window")
+            grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" $screenshot_path
+            ;;
+        "screen")
+            grim $screenshot_path
+    esac
+    [ -f $tmp_path ] &&
+        wl-copy < $tmp_path
+fi
+
+[ -f $screenshot_path ] &&
+    notify-send -i $screenshot_path "Screenshot" "$region $action_message"
+[ $tmp_path ] && [ -f $tmp_path ] &&
+    rm $tmp_path
+
+

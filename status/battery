@@ -1,0 +1,42 @@
+#! /bin/sh
+
+# capacity=$(cat /sys/class/power_supply/BAT1/capacity)
+# 
+# [ $(cat /sys/class/power_supply/BAT1/status) = "Charging" ] && status="Ch "
+# 
+# 
+# echo "$capacity%"
+# unset warn
+
+ramp=(         )
+ac_bat=
+ac=ﮣ
+mainColor="4"
+dwm_status2d=false
+
+if [ "$NO_BAT" = true ] ; then
+    $dwm_status2d &&
+        echo "^C$mainColor^$ac^d^" ||
+        echo "$ac"
+else
+    bat=$(cat /sys/class/power_supply/BAT1/capacity)
+    plugged=$(cat /sys/class/power_supply/ACAD/online)
+    [ "$bat" -le 25 -a "$plugged" != "1" ] && warn="LOW " && notify-send "Battery low"
+
+    if [ $plugged == "1" ]; then
+        $dwm_status2d &&
+            echo "^C$mainColor^$ac_bat^d^ $bat%" ||
+            echo "$ac_bat $bat%"
+    else
+        for i in ${!ramp[@]}; do
+            let iPercent=(i+1)*10
+            if [ $bat -le $iPercent -a $bat -gt $(($iPercent - 10)) ]; then
+                $dwm_status2d &&
+                    echo "$warn^C$mainColor^${ramp[$i]}^d^ $bat%" ||
+                    echo "$warn${ramp[$i]} $bat%"
+                break
+            fi
+        done
+    fi
+fi
+

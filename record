@@ -1,0 +1,17 @@
+#! /usr/bin/env bash
+notify-send -t 1011 "Recording screen in: 3"
+sleep 1
+notify-send -t 1011 "Recording screen in: 2"
+sleep 1
+notify-send -t 1000 "Recording screen in: 1"
+sleep 1
+
+if [ $1 == "window" ]; then
+    wf-recorder -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"
+elif [ $1 == "selection" ]; then
+    wf-recorder -g "$(slurp)"
+else
+    wf-recorder
+fi
+
+notify-send "done"

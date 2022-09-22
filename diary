@@ -1,0 +1,14 @@
+#!/bin/sh
+
+date=$(date '+%Y-%m-%d')
+time=$(date '+%H:%M')
+dir=~/Notes/neorg/diary
+file=$dir/$date.norg
+
+[ -f $dir ] ||
+    mkdir -p $dir
+
+swaymsg fullscreen
+echo -e "\n* $time\n" >> $file
+nvim "$file" +SoftPencil +startinsert +Goyo +
+

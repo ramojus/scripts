@@ -1,0 +1,16 @@
+#!/bin/sh
+
+lang=$1
+input_image=/tmp/tesseract_input.png
+# session_type=$(loginctl show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}')
+session_type=wayland
+
+# if [ session_type != "wayland" ]; then 
+    # maim -s "$input_image" &&
+    #     (tesseract "$input_image" - -l $lang | xclip -selection clipboard ;
+    #         rm "$input_image")
+# else
+    grim -g "$(slurp)" $input_image &&
+        (tesseract "$input_image" stdout -l $lang | wl-copy ;
+            rm "$input_image")
+# fi

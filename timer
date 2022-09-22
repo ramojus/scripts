@@ -1,0 +1,32 @@
+#! /usr/bin/env bash
+# https://superuser.com/a/611582
+
+print_help() {
+    echo "Argument: either 'st' for stopwatch, or a number(s) for count down
+time (minutes [space] seconds)"
+}
+
+if [ $# -eq 0 ]; then
+    print_help
+elif [ "$1" == "st" ]; then
+    startDate=`date +%s`;
+    while true; do 
+        echo -ne "$(date -u --date @$((`date +%s` - $startDate)) +%H:%M:%S)\r";
+        sleep 0.1
+    done
+elif [[ $1 =~ [0-9]+ ]]; then
+    seconds=0
+    if [ ! -z "$2" ] && [[ $2 =~ [0-9]+$ ]]; then
+        seconds=$2
+    fi
+    time=$(expr $1*60+$seconds)
+    startDate=$((`date +%s` + $time)); 
+    while [ "$startDate" -ge `date +%s` ]; do 
+        echo -ne "$(date -u --date @$(($startDate - `date +%s` )) +%H:%M:%S)\r"; 
+        sleep 0.1
+    done
+    notify-send "Time is up!"
+else
+    print_help
+fi
+

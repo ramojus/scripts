@@ -1,0 +1,15 @@
+*
+!timer
+!diary
+!colorPicker
+!screenshot
+!imgToText
+!mergepdf
+!setWall
+!screens
+!record
+!timer
+!volume
+!status/
+!status/**
+!.gitignore

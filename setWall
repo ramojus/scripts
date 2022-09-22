@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+tool=$1
+
+wallpaper=$(sxiv -o -r ~/wallpapers/)
+cp "$wallpaper" ~/wallpapers/wallpaper.jpg
+session_type=$(loginctl show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}')
+
+if [ "$session_type" != "wayland" ]; then
+    if [ "$tool" == "wal" ]; then
+        echo "setting \"$wallpaper\" as wallpaper with wal"
+        wal -i "$wallpaper"
+    else
+        echo "setting \"$wallpaper\" as wallpaper with feh"
+        feh --bg-fill "$wallpaper"
+    fi
+else
+    echo "setting \"$wallpaper\" as wallpaper"
+    pkill swaybg ; swaybg -m fill -o "*" -i "$wallpaper" &
+fi

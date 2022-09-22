@@ -1,0 +1,26 @@
+#! /bin/sh
+
+action=$1
+
+case $action in
+    "up")
+        pamixer -i 3
+        ;;
+    "down")
+        pamixer -d 3
+        ;;
+    "toggle")
+        pamixer -t
+        ;;
+    "mic")
+        pamixer --default-source -t
+        [[ "$(pamixer --default-source --get-mute)" == "true" ]] &&
+            notify-send -t 1000 "Microphone off" ||
+            notify-send -t 1000 "Microphone on"
+        exit
+        ;;
+
+esac
+
+notify-send -t 1000 -h int:value:"$(pamixer --get-volume-human)" "Volume"
+[[ "$(pamixer --get-mute)" == "true" ]] && notify-send -t 1000 "Volume muted"

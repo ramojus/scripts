@@ -1,0 +1,8 @@
+#!/bin/sh
+
+case "$(cat /sys/class/net/w*/operstate 2>/dev/null)" in
+	down) wifistatus="none" ;;
+	up) wifistatus="$(awk '/^\s*w/{ print int($3 * 10 / 7) "%" }' /proc/net/wireless)" ;;
+esac
+
+echo "$wifistatus"
