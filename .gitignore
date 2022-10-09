@@ -10,6 +10,7 @@
 !record
 !timer
 !volume
+!initRepos
 !status/
 !status/**
 !.gitignore

@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+repos=("https://github.com/ramojus/dotfiles" "$HOME/.config"
+	"https://github.com/ramojus/studijos" "$HOME/studijos"
+	"https://github.com/ramojus/site-notes" "$HOME/site-notes"
+    "https://github.com/ramojus/autosetup" "$HOME/dev/autosetup")
+
+for ((i = 1; i < ${#repos[@]}; i += 2)) do
+	repo=${repos[$((i-1))]}
+	dir=${repos[$i]}
+	if [[ ! -d $dir/.git ]]; then
+		mkdir -p $dir
+		mkdir -p $dir-temp-git
+		git clone $repo $dir-temp-git
+        shopt -s dotglob # mv hidden files
+        mv $dir-temp-git/* $dir
+        rm -rf $dir-temp-git
+	fi
+done
+
