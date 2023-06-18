@@ -4,23 +4,30 @@ action=$1
 
 case $action in
     "up")
-        pamixer -i 3
+        # pamixer -i 3
+        pactl set-sink-volume 0 +3%
         ;;
     "down")
-        pamixer -d 3
+        # pamixer -d 3
+        pactl set-sink-volume 0 -3%
         ;;
     "toggle")
-        pamixer -t
+        # pamixer -t
+        pactl set-sink-mute 0 toggle
         ;;
     "mic")
-        pamixer --default-source -t
-        [[ "$(pamixer --default-source --get-mute)" == "true" ]] &&
-            notify-send -t 1000 "Microphone off" ||
-            notify-send -t 1000 "Microphone on"
-        exit
+        # pamixer --default-source -t
+        # [[ "$(pamixer --default-source --get-mute)" == "true" ]] &&
+        #     notify-send -t 1000 "Microphone off" ||
+        #     notify-send -t 1000 "Microphone on"
+        # exit
         ;;
-
 esac
 
-notify-send -t 1000 -h int:value:"$(pamixer --get-volume-human)" "Volume"
-[[ "$(pamixer --get-mute)" == "true" ]] && notify-send -t 1000 "Volume muted"
+volume=`pactl get-sink-volume 0 | tr ' ' '\n' | grep % | head -1`
+
+if [ "`pactl get-sink-mute 0`" = "Mute: no" ]; then
+    notify-send -t 1000 -h int:value:"$volume" "Volume"
+else
+    notify-send -t 1000 "Volume muted"
+fi

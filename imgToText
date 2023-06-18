@@ -10,7 +10,7 @@ session_type=wayland
     #     (tesseract "$input_image" - -l $lang | xclip -selection clipboard ;
     #         rm "$input_image")
 # else
-    grim -g "$(slurp)" $input_image &&
+    grim -g "$(slurp)" "$input_image" &&
         (tesseract "$input_image" stdout -l $lang | wl-copy ;
             rm "$input_image")
 # fi
