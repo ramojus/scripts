@@ -4,16 +4,13 @@ action=$1
 
 case $action in
     "up")
-        # pamixer -i 3
-        pactl set-sink-volume 0 +3%
+        wpctl set-volume @DEFAULT_SINK@ 5%+
         ;;
     "down")
-        # pamixer -d 3
-        pactl set-sink-volume 0 -3%
+        wpctl set-volume @DEFAULT_SINK@ 5%-
         ;;
     "toggle")
-        # pamixer -t
-        pactl set-sink-mute 0 toggle
+        wpctl set-mute @DEFAULT_SINK@ toggle
         ;;
     "mic")
         # pamixer --default-source -t
@@ -24,10 +21,12 @@ case $action in
         ;;
 esac
 
-volume=`pactl get-sink-volume 0 | tr ' ' '\n' | grep % | head -1`
+volume=`wpctl get-volume @DEFAULT_SINK@ | tr ' ' '\n' | grep '0\.[0-9]' | cut -d '.' -f 2`
+description=`wpctl inspect @DEFAULT_SINK@ | grep node.description | cut -d '"' -f 2`
+muted=`wpctl get-volume @DEFAULT_SINK@ | grep muted -io | tr '[:upper:]' '[:lower:]'`
 
-if [ "`pactl get-sink-mute 0`" = "Mute: no" ]; then
-    notify-send -t 1000 -h int:value:"$volume" "Volume"
+if [ $muted = 'muted' ]; then
+    notify-send -t 1000 -h int:value:"$volume" "Volume (muted)" "$description" -a "Volume script"
 else
-    notify-send -t 1000 "Volume muted"
+    notify-send -t 1000 -h int:value:"$volume" "Volume" "$description" -a "Volume script"
 fi
