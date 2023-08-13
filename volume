@@ -25,7 +25,7 @@ volume=`wpctl get-volume @DEFAULT_SINK@ | tr ' ' '\n' | grep '0\.[0-9]' | cut -d
 description=`wpctl inspect @DEFAULT_SINK@ | grep node.description | cut -d '"' -f 2`
 muted=`wpctl get-volume @DEFAULT_SINK@ | grep muted -io | tr '[:upper:]' '[:lower:]'`
 
-if [ $muted = 'muted' ]; then
+if [[ $muted == 'muted' ]]; then
     notify-send -t 1000 -h int:value:"$volume" "Volume (muted)" "$description" -a "Volume script"
 else
     notify-send -t 1000 -h int:value:"$volume" "Volume" "$description" -a "Volume script"

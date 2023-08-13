@@ -8,7 +8,7 @@ file=$dir/$date.norg
 [ -f $dir ] ||
     mkdir -p $dir
 
-swaymsg fullscreen
+swaymsg fullscreen enable
 echo -e "\n* $time\n" >> $file
-nvim "$file" +SoftPencil +startinsert +Goyo +
+nvim "$file" +'set linebreak wrap' +ZenMode +startinsert +'set nonu nornu scl=no' +
 
