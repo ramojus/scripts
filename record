@@ -6,12 +6,18 @@ sleep 1
 notify-send -t 1000 "Recording screen in: 1"
 sleep 1
 
+audio_sink=`wpctl status | grep "Audio/Sink" | awk '{ print $3 }'`.monitor
+
+file_name="recording.mp4"
+
+rm ~/$file_name
+
 if [ $1 == "window" ]; then
-    wf-recorder -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"
+    wf-recorder --audio=$audio_sink -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" -f "$file_name"
 elif [ $1 == "selection" ]; then
-    wf-recorder -g "$(slurp)"
+    wf-recorder --audio=$audio_sink -g "$(slurp)" -f "$file_name"
 else
-    wf-recorder
+    wf-recorder --audio=$audio_sink -f "$file_name"
 fi
 
 notify-send "done"

@@ -37,13 +37,16 @@ if [ "$session_type" != "wayland" ]; then
 else
     case $region in
         "selection")
-            grim -t png -l 9 -g "$(slurp)" $screenshot_path
+            # grim -l 0 -c $screenshot_path
+            # swayimg -c info.mode=off -f $screenshot_path &
+            grim -g "$(slurp)" $screenshot_path || rm $screenshot_path
+            # pkill --newest swayimg
             ;;
         "window")
-            grim -t png -l 9 -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" $screenshot_path
+            grim -g "$(swaymsg -t get_tree | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')" $screenshot_path
             ;;
         "screen")
-            grim -t png -l 9 $screenshot_path
+            grim $screenshot_path
     esac
     [ -f $tmp_path ] &&
         wl-copy < $tmp_path

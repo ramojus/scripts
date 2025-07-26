@@ -4,7 +4,7 @@ tool=$1
 
 wallpaper=$(sxiv -o -r ~/wallpapers/)
 cp "$wallpaper" ~/wallpapers/wallpaper.jpg
-session_type=$(loginctl show-session $(awk '/tty/ {print $1}' <(loginctl)) -p Type | awk -F= '{print $2}')
+session_type=$XDG_SESSION_TYPE
 
 if [ "$session_type" != "wayland" ]; then
     if [ "$tool" == "wal" ]; then
@@ -16,5 +16,9 @@ if [ "$session_type" != "wayland" ]; then
     fi
 else
     echo "setting \"$wallpaper\" as wallpaper"
-    pkill swaybg ; swaybg -m fill -o "*" -i "$wallpaper" &
+    if [[ "$wallpaper" =~ "/bw/" ]]; then
+        pkill swaybg ; swaybg -m center -o "*" -i "$wallpaper" -c "#1a1a1a" &
+    else
+        pkill swaybg ; swaybg -m fill -o "*" -i "$wallpaper" -c "#1a1a1a" &
+    fi
 fi

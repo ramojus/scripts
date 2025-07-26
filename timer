@@ -22,7 +22,8 @@ elif [[ $1 =~ [0-9]+ ]]; then
     time=$(expr $1*60+$seconds)
     startDate=$((`date +%s` + $time)); 
     while [ "$startDate" -ge `date +%s` ]; do 
-        echo -ne "$(date -u --date @$(($startDate - `date +%s` )) +%H:%M:%S)\r"; 
+        time="$(date -u --date @$(($startDate - `date +%s` )) +%H:%M:%S)"
+        echo -ne "$time\r"
         sleep 0.1
     done
     notify-send "Time is up!"

@@ -11,6 +11,6 @@ session_type=wayland
     #         rm "$input_image")
 # else
     grim -g "$(slurp)" "$input_image" &&
-        (tesseract "$input_image" stdout -l $lang | wl-copy ;
+        (tesseract -l $lang "$input_image" stdout | wl-copy ;
             rm "$input_image")
 # fi
